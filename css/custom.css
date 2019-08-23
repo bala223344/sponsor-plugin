@@ -1,0 +1,66 @@
+.StripeElement {
+    box-sizing: border-box;
+  
+    height: 40px;
+  
+    padding: 10px 12px;
+  
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background-color: white;
+  
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+    -webkit-transition: box-shadow 150ms ease;
+    transition: box-shadow 150ms ease;
+  }
+  
+  .StripeElement--focus {
+    box-shadow: 0 1px 3px 0 #cfd7df;
+  }
+  
+  .StripeElement--invalid {
+    border-color: #fa755a;
+  }
+  
+  .StripeElement--webkit-autofill {
+    background-color: #fefde5 !important;
+  }
+
+
+  .slider-container {
+    
+    margin:6px;
+  }
+  .slider-container img {
+    max-width: 100%;
+  }
+  .tns-nav {
+    width:100%;
+    display: block;
+  }
+  .tns-inner {
+    height:400px;
+    display: flex;
+
+  }
+
+  .tns-controls [aria-controls] {
+    font-size: 15px;
+    margin: 0 5px;
+    padding: 0 1em;
+    height: 2.5em;
+    color: #000;
+    background: #66CCFF;
+    border-radius: 3px;
+    border: 0;
+}
+
+.tns-nav > [aria-controls] {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  margin: 0 5px;
+  border-radius: 50%;
+  background: #ddd;
+  border: 0;
+}
