@@ -27,6 +27,14 @@
   }
 
 
+  #cart-records {
+    max-width: 600px;
+  }
+  #cart-records .img-children{
+    width : 100px;
+    border-radius: 1px;
+  }
+  
   .slider-container {
     
     margin:6px;
@@ -63,4 +71,7 @@
   border-radius: 50%;
   background: #ddd;
   border: 0;
+}
+.d-none {
+  display: none !important;
 }

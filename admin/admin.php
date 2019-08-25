@@ -34,8 +34,11 @@ function manage_child_sponsorship_callback(){
             
             $url = $movefile["url"];
             $name = $_POST['name'];
-            $email = $_POST['description'];
-       $wpdb->query("INSERT INTO $table_name(name,description,url) VALUES('$name','$description', '$url')");
+            $description = $_POST['description'];
+            $stripename = $_POST['stripename'];
+
+            $price = $_POST['price'];
+       $wpdb->query("INSERT INTO $table_name(name,description,url,price,stripename) VALUES('$name','$description', '$url', '$price', '$stripename')");
 
 
         } else {
@@ -57,7 +60,9 @@ function manage_child_sponsorship_callback(){
     if (isset($_POST['uptsubmit'])) {
       $id = $_POST['id'];
       $name = $_POST['name'];
+      $stripename = $_POST['stripename'];
       $description = $_POST['description'];
+      $price = $_POST['price'];
 
 
       $uploadedfile = $_FILES['child_photo'];
@@ -70,7 +75,7 @@ function manage_child_sponsorship_callback(){
       }
 
      // echo "UPDATE $table_name SET name='$name',description='$email' $urlsql WHERE user_id='$id'";exit;
-      $wpdb->query("UPDATE $table_name SET name='$name',description='$description' $urlsql WHERE id='$id'");
+      $wpdb->query("UPDATE $table_name SET name='$name',price='$price', description='$description' , stripename='$stripename' $urlsql WHERE id='$id'");
       echo "<script>location.replace('admin.php?page=manage-child-sponsorship');</script>";
     }
 
@@ -82,43 +87,21 @@ function manage_child_sponsorship_callback(){
     ?>
     <div class="wrap">
       <h2>Child Sponsorship</h2>
-      <table class="wp-list-table widefat striped">
-        <thead>
-          <tr>
-            <th >User ID</th>
-            <th >Name</th>
-            <th >Description</th>
-            <th >Photo</th>
-            <th >Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <form action="" method="post" enctype="multipart/form-data">
-            <tr>
-              <td><input type="text" required id="newname" name="name"></td>
-              <td><textarea required name="description"></textarea></td>
-              <td><input type="file" required name="child_photo"></td>
-              <td><button id="newsubmit" name="newsubmit" type="submit">Add</button></td>
-            </tr>
-          </form>
-          <?php
-            $result = $wpdb->get_results("SELECT * FROM $table_name");
-            foreach ($result as $print) {
-              echo "
-                <tr>
-                  <td >$print->time</td>
-                  <td >$print->name</td>
-                  <td>$print->description</td>
-                  <td> <img src='$print->url' width='200'/></td>
-                  <td ><a href='admin.php?page=manage-child-sponsorship&upt=$print->id'>Edit</a> <a href='admin.php?page=manage-child-sponsorship&del=$print->id'><button type='button'>DELETE</button></a></td>
-                </tr>
-              ";
-            }
-          ?>
-        </tbody>  
-      </table>
-      <br>
-      <br>
+      <table class='wp-list-table widefat striped'>
+            <thead>
+              <tr>
+                <th >Name</th>
+                <th >Stripename</th>
+                <th >Description</th>
+                <th >Amount</th>
+                <th >Photo</th>
+                <th >Actions</th>
+                <th >Donor</th>
+
+
+              </tr>
+            </thead>
+
       <?php
         if (isset($_GET['upt'])) {
           $upt_id = $_GET['upt'];
@@ -129,57 +112,82 @@ function manage_child_sponsorship_callback(){
            
           }
           echo "
-          <table class='wp-list-table widefat striped'>
-            <thead>
-              <tr>
-                <th >User ID</th>
-                <th >Name</th>
-                <th >Description</th>
-                <th >Photo</th>
-                <th >Actions</th>
-              </tr>
-            </thead>
+         
             <tbody>
               <form action='' method='post' enctype='multipart/form-data'>
                 <tr>
-                  <td >$print->id <input type='hidden' name='id' value='$print->id'></td>
+                   <input type='hidden' name='id' value='$print->id'>
                   <td ><input type='text' id='uptname' name='name' value='$print->name'></td>
-                  <td ><textarea required name='description'>$description</textarea></td>
+                  <td ><input type='text' id='' name='stripename' value='$print->stripename'></td>
+                  <td ><textarea required name='description'>$print->description</textarea></td>
+                  <td ><input required type='number' name='price' value='$print->price'/></td>
+
                   <td > <img src='$print->url' width='300px'/> <input type='file'    name='child_photo'> </td>
-                  <td ><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=manage-child-sponsorship'><button type='button'>CANCEL</button></a></td>
+                  <td colspan='2'><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=manage-child-sponsorship'><button type='button'>CANCEL</button></a></td>
+
                 </tr>
               </form>
             </tbody>
-          </table>";
-        }
+          ";
+        } else {
       ?>
+       
+        <tbody>
+          <form action="" method="post" enctype="multipart/form-data">
+            <tr>
+              <td><input type="text" required id="newname" name="name"></td>
+              <td><input type="text" placeholder="ex: david_wayne" required  name="stripename">
+              <i>should unique, no special chars </i>
+            </td>
+              <td><textarea required name="description"></textarea></td>
+              <td ><input required type='number' name='price' /></td>
+              <td><input type="file" required name="child_photo"></td>
+              <td colspan='2'><button id="newsubmit" name="newsubmit" type="submit">Add</button></td>
+            </tr>
+          </form>
+          <?php
+            $result = $wpdb->get_results("SELECT * FROM $table_name");
+            foreach ($result as $print) {
+              echo "
+                <tr>
+                  <td >$print->name</td>
+                  <td >$print->stripename</td>
+                  <td>$print->description</td>
+                  <td> $print->price </td>
+                  <td> <img src='$print->url' width='200'/></td>
+                  <td ><a href='admin.php?page=manage-child-sponsorship&upt=$print->id'>Edit</a> <a href='admin.php?page=manage-child-sponsorship&del=$print->id'><button type='button'>DELETE</button></a></td>
+                  <td> $print->donor_user</td>
+                </tr>
+              ";
+            }
+          ?>
+        </tbody>  
+          <?php } ?>
+      </table>
+      <br>
+      <br>
+     
     </div><?php
 
 }
 function child_sponsorship_add_submenu() {
     add_submenu_page(
     	"manage-child-sponsorship",
-    	__('Video PopUp General Settings', 'child-sponsorship'), __('General Settings', 'child-sponsorship'),
+    	__('Sponsorship', 'child-sponsorship'), __('General Settings', 'child-sponsorship'),
     	'manage_options',
     	'manage-child-sponsorship',
     	'manage_child_sponsorship_callback'
     );
 
-    add_submenu_page(
-        "manage-child-sponsorship",
-        __('Video PopUp on Page Load', 'child-sponsorship'), __('On Page Load', 'video-popup'),
-        'manage_options',
-        'manage-child-sponsorship',
-        'manage_child_sponsorship_callback'
-    );
-
     // add_submenu_page(
-    // 	"video_popup_general_settings",
-    // 	__('Video PopUp Shortcode', 'video-popup'), __('Shortcode Usage', 'video-popup'),
-    // 	'manage_options',
-    // 	'video_popup_shortcode',
-    // 	'video_popup_shortcode_callback'
+    //     "manage-child-sponsorship",
+    //     __('Video PopUp on Page Load', 'child-sponsorship'), __('On Page Load', 'video-popup'),
+    //     'manage_options',
+    //     'manage-child-sponsorship',
+    //     'manage_child_sponsorship_callback'
     // );
+
+  
 }
 add_action('admin_menu', 'child_sponsorship_add_submenu');
 

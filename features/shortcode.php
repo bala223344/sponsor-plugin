@@ -28,10 +28,25 @@ function child_sponsorship_stripe() {
 // The function that handles the AJAX request
 function my_action_callback() {
   check_ajax_referer( 'my-special-string', 'security' );
-  $whatever = intval( $_POST['whatever'] );
-  $_SESSION['DONOR_CART'] = array('prod_id' => 1, 'account_id' => 2);
-  $whatever += 10;
-  echo $whatever;
+ 
+if($_POST['remove_from_cart']) {
+	
+	$darr = ($_SESSION['DONOR_CART'])?$_SESSION['DONOR_CART']:array();
+	if(in_array($_POST['prod_id'], $darr))
+	if (($key = array_search($_POST['prod_id'], $darr)) !== false) {
+		unset($darr[$key]);
+	}
+	 $_SESSION['DONOR_CART'] = $darr;
+	 echo count($_SESSION['DONOR_CART']);
+
+}else {
+	$darr = ($_SESSION['DONOR_CART'])?$_SESSION['DONOR_CART']:array();
+	if(!in_array($_POST['prod_id'], $_SESSION['DONOR_CART']))
+		array_push($darr, $_POST['prod_id']);
+	 $_SESSION['DONOR_CART'] = $darr;
+	 echo count($_SESSION['DONOR_CART']);	
+}
+ 
   die(); // this is required to return a proper result
 }
 add_action( 'wp_ajax_my_action', 'my_action_callback' );
@@ -46,111 +61,71 @@ function child_sponsorship_html() {
 	include_once( dirname( __FILE__ )."/display_records.php");
 
 ?>
-
-
-<form action="<?php esc_url( $_SERVER['REQUEST_URI'] ); ?>" method="post" id="payment-form">
-
-<input type="hidden" name="card-submitted" value="1"/>
-  <div class="form-row">
-    <label for="card-element">
-      Credit or debit card
-    </label>
-    <div id="card-element">
-      <!-- A Stripe Element will be inserted here. -->
-    </div>
-
-    <!-- Used to display form errors. -->
-    <div id="card-errors" role="alert"></div>
-  </div>
-
-  <button>Submit Payment</button>
-</form>
 <?php
-
-
 }
-function child_sponsorship_handle_submit() {
-
-	if($_POST['card-submitted']) {
-		
-			/* Load Stripe SDK */
-			require_once(  dirname( __FILE__ ) . '/../vendor/autoload.php' );
-		\Stripe\Stripe::setApiKey('sk_test_kx5SX3ZTnrDZbN57dEt85hNq00702JBtbu');
-		$token = $_POST['stripeToken'];
 
 
+
+function child_sponsorship_cart_html() {
 	
+	include_once( dirname( __FILE__ )."/display_cart.php");
+}
 
-		// Create a Customer
-$customer = \Stripe\Customer::create(array(
-    "email" => "paying.user@example.com",
-    "source" => $token,
-));
+function child_sponsorship_my_donations_html() {
+	
+	//include_once( dirname( __FILE__ )."/my_donations.php");
+}
+function child_sponsorship_checkout_html() {
+	
+	include_once( dirname( __FILE__ )."/checkout_form.php");
+}
 
+function child_sponsorship_checkout_submit() {
 
-
-// Creates a subscription plan. This can also be done through the Stripe dashboard.
-// You only need to create the plan once.
-$subscription = \Stripe\Plan::create(array(
-    "amount" => 3000,
-    "interval" => "month",
-    "currency" => "cad",
-	"id" => "monthly1",
-	"product" => [
-		"name" => "monthly1"
-	  ],
-));
-
-// Subscribe the customer to the plan
-$subscription = \Stripe\Subscription::create(array(
-    "customer" => $customer->id,
-    "plan" => "monthly1"
-));
+	include_once( dirname( __FILE__ )."/checkout_stripe_action.php");
 
 
-$subscription = \Stripe\Plan::create(array(
-    "amount" => 2000,
-    "interval" => "month",
-    "currency" => "cad",
-	"id" => "monthly2",
-	"product" => [
-		"name" => "monthly2"
-	  ],
-));
-
-// Subscribe the customer to the plan
-$subscription = \Stripe\Subscription::create(array(
-    "customer" => $customer->id,
-    "plan" => "monthly2"
-));
-
-
-print_r($subscription);
-
-		exit;
-		
-	}
-
-
-	if($_GET['add_to_cart']) {
-
-	}
 
 }
 
 function child_sponsorship_front(){
 
 
-	//$media = 'good byo';
+	ob_start();
+	child_sponsorship_html();
 
-	//return $media;
+	return ob_get_clean();
+
+}
+function child_sponsorship_cart(){
+
 
 	ob_start();
-	child_sponsorship_handle_submit();
-	child_sponsorship_html();
+	child_sponsorship_cart_html();
+	return ob_get_clean();
+
+}
+function child_sponsorship_my_donations(){
+
+
+	ob_start();
+	child_sponsorship_my_donations_html();
+	return ob_get_clean();
+
+}
+
+function child_sponsorship_checkout(){
+
+
+	ob_start();
+	child_sponsorship_checkout_html();
+	child_sponsorship_checkout_submit();
 
 	return ob_get_clean();
 
 }
 add_action( 'wp_enqueue_scripts', 'child_sponsorship_stripe' );
 add_shortcode('child-sponsorship-front', 'child_sponsorship_front');
+add_shortcode('child-sponsorship-cart', 'child_sponsorship_cart');
+add_shortcode('child-sponsorship-checkout', 'child_sponsorship_checkout');
+add_shortcode('child-sponsorship-my-donations', 'child_sponsorship_my_donations');
