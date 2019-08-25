@@ -20,6 +20,8 @@ $(function () {
 
 
 
+
+
   }
 
 
@@ -62,15 +64,22 @@ $(function () {
     };
 
     $.post(MyAjax.ajaxurl, data, function (response) {
-      if (parseInt(response) >= 0) {
-        $("#donor-cart-count").html(parseInt(response))
-        //   $("#donor-cart").removeClass('d-none')
-        //  console.log($(this).attr('class'));
 
-        // $(this).html("loading..")
-        ele.parent().remove()
+      window.location.reload()
 
-      }
+
+      // if (parseInt(response) > 0) {
+
+      //   $("#donor-cart-count").html(parseInt(response))
+      //   ele.parent().parent().remove()
+
+      // }else {
+
+      //   $("#donor-actions").html('Your cart is empty')
+      //   ele.parent().parent().remove()
+
+
+      // }
 
     });
 

@@ -20,7 +20,7 @@ if($result && is_user_logged_in() ) {
 <input type="hidden" name="card-submitted" value="1"/>
   <div class="form-row">
     <label for="card-element">
-      Credit or debit card
+      Please provide you Credit card to complete your subscription
     </label>
     <div id="card-element">
       <!-- A Stripe Element will be inserted here. -->
@@ -30,11 +30,11 @@ if($result && is_user_logged_in() ) {
     <div id="card-errors" role="alert"></div>
   </div>
 
-  <button>Submit Payment</button>
+  <button class="btn">Submit Payment</button>
 </form>
 
 
 
   <?php } else {?>
-    Your cart is empty or you are not logged in.
+    <div class="cart-empty"> Your cart is empty or you are not logged in.</div>
   <?php } ?>

@@ -28,7 +28,6 @@ if($_POST['card-submitted']) {
 
   foreach ($result as $id) {
     $print = get_details($id);
-    $current_user = wp_get_current_user();
 
    
     
@@ -59,29 +58,15 @@ if($_POST['card-submitted']) {
       
 
 
-      // $subscription = \Stripe\Plan::create(array(
-      //   "amount" => 2000,
-      //   "interval" => "month",
-      //   "currency" => "cad",
-      // "id" => "monthly2",
-      // "product" => [
-      //   "name" => "monthly2"
-      //   ],
-      // ));
-      
-      // // Subscribe the customer to the plan
-      // $subscription = \Stripe\Subscription::create(array(
-      //   "customer" => $customer->id,
-      //   "plan" => "monthly2"
-      // ));
-      
+  
       
       $success = 1;
 
-      //unset($_SESSION['DONOR_CART']);
+      unset($_SESSION['DONOR_CART']);
       
       }catch (Exception $e) {
-        echo $e->getMessage();
+        
+        echo "<div class='error'>".$e->getMessage()."</div>";
       }
         
 

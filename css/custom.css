@@ -30,24 +30,86 @@
   #cart-records {
     max-width: 600px;
   }
-  #cart-records .img-children{
+  #cart-records .img-children, .cart-row .img-children{
     width : 100px;
     border-radius: 1px;
   }
   
   .slider-container {
-    
-    margin:6px;
+        
   }
+
+  .slider-title {
+    font-size: 17px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: capitalize;
+    position: absolute;
+    bottom: 45px;
+    width: 100%; 
+    text-align: center;
+    background: #1312128a;
+    color:#fff;
+  }
+
   .slider-container img {
     max-width: 100%;
+  }
+  #donor-cart {
+    font-size: 15px;
+  }
+  #donor-cart-count {
+    margin: 0 5px;
+    color: #254151;
+  }
+
+  .add-to-cart, .remove-from-cart {
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    font-weight: bold;
+
+
+  }
+  .cart-empty {
+    color: #6f6f02;
+    font-size: 15px;
+  }
+  .add-to-cart.clickable, .remove-from-cart {
+    color: #254151;
+  }
+
+  .cart-row {
+    float: left;
+    width: 100%;
+  }
+  .cart-row li {
+      width:25%;
+      float: left;
+    }
+
+    .link {
+      font-size: 14px;
+      text-decoration: underline; 
+    }
+  .btn {
+    background-color: #4CAF50; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .error {
+    color: red;
   }
   .tns-nav {
     width:100%;
     display: block;
   }
   .tns-inner {
-    height:400px;
+    height:420px;
     display: flex;
 
   }

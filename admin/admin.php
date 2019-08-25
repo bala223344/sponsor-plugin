@@ -6,7 +6,7 @@ defined( 'ABSPATH' ) or die(':)');
 
 function child_sponsorship_add_menu_page() {
     add_menu_page(
-        __('General Settings', 'child-sponsorship'),
+        __('Child sponsporship', 'child-sponsorship'),
         __('Child sponsporship', 'child-sponsorship'),
         'manage_options',
         'manage-child-sponsorship',
@@ -35,10 +35,11 @@ function manage_child_sponsorship_callback(){
             $url = $movefile["url"];
             $name = $_POST['name'];
             $description = $_POST['description'];
+            $location = $_POST['location'];
             $stripename = $_POST['stripename'];
 
             $price = $_POST['price'];
-       $wpdb->query("INSERT INTO $table_name(name,description,url,price,stripename) VALUES('$name','$description', '$url', '$price', '$stripename')");
+       $wpdb->query("INSERT INTO $table_name(name,description,url,price,location,stripename) VALUES('$name','$description', '$url', '$price', '$location', '$stripename')");
 
 
         } else {
@@ -62,6 +63,7 @@ function manage_child_sponsorship_callback(){
       $name = $_POST['name'];
       $stripename = $_POST['stripename'];
       $description = $_POST['description'];
+      $location = $_POST['location'];
       $price = $_POST['price'];
 
 
@@ -75,33 +77,23 @@ function manage_child_sponsorship_callback(){
       }
 
      // echo "UPDATE $table_name SET name='$name',description='$email' $urlsql WHERE user_id='$id'";exit;
-      $wpdb->query("UPDATE $table_name SET name='$name',price='$price', description='$description' , stripename='$stripename' $urlsql WHERE id='$id'");
+      $wpdb->query("UPDATE $table_name SET name='$name',price='$price', description='$description' ,location='$location' , stripename='$stripename' $urlsql WHERE id='$id'");
       echo "<script>location.replace('admin.php?page=manage-child-sponsorship');</script>";
     }
 
     if (isset($_GET['del'])) {
       $del_id = $_GET['del'];
       $wpdb->query("DELETE FROM $table_name WHERE id='$del_id'");
-      echo "<script>location.replace('admin.php?page=manage-child-sponsorship');</script>";
+      echo "<script>location.replace('admin.php?page=manage-child-sponsorship&deleted=1');</script>";
     }
+    if (isset($_GET['deleted'])) {
+      echo '<div class="warning">Record deleted. Please make sure to delete the associated SKU product in Stripe dashboard.</div>';
+    }
+
     ?>
     <div class="wrap">
       <h2>Child Sponsorship</h2>
-      <table class='wp-list-table widefat striped'>
-            <thead>
-              <tr>
-                <th >Name</th>
-                <th >Stripename</th>
-                <th >Description</th>
-                <th >Amount</th>
-                <th >Photo</th>
-                <th >Actions</th>
-                <th >Donor</th>
-
-
-              </tr>
-            </thead>
-
+      
       <?php
         if (isset($_GET['upt'])) {
           $upt_id = $_GET['upt'];
@@ -113,38 +105,54 @@ function manage_child_sponsorship_callback(){
           }
           echo "
          
-            <tbody>
-              <form action='' method='post' enctype='multipart/form-data'>
-                <tr>
-                   <input type='hidden' name='id' value='$print->id'>
-                  <td ><input type='text' id='uptname' name='name' value='$print->name'></td>
-                  <td ><input type='text' id='' name='stripename' value='$print->stripename'></td>
-                  <td ><textarea required name='description'>$print->description</textarea></td>
-                  <td ><input required type='number' name='price' value='$print->price'/></td>
+              <form class='child-form' action='' method='post' enctype='multipart/form-data'>
+                
+                  <input type='hidden' name='id' value='$print->id'>
+                  <div><input type='text'  placeholder='Name' required id='uptname' name='name' value='$print->name'></div>
+                  <div><input type='text'  placeholder='Stripename' id='' required name='stripename' value='$print->stripename'></div>
+                  <div><input type='text'  placeholder='Location' id='' required name='location' value='$print->location'></div>
+                  <div><textarea required  placeholder='Description' name='description'>$print->description</textarea></div>
+                  <div><input required  placeholder='Price' type='number' name='price' value='$print->price'/></div>
 
-                  <td > <img src='$print->url' width='300px'/> <input type='file'    name='child_photo'> </td>
-                  <td colspan='2'><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=manage-child-sponsorship'><button type='button'>CANCEL</button></a></td>
+                  <div> <img src='$print->url' width='250px'/>
+                  <br /> <input type='file'    name='child_photo'> </div>
+                  <div><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=manage-child-sponsorship'><button type='button'>CANCEL</button></a></div>
 
-                </tr>
               </form>
-            </tbody>
           ";
         } else {
       ?>
        
-        <tbody>
-          <form action="" method="post" enctype="multipart/form-data">
-            <tr>
-              <td><input type="text" required id="newname" name="name"></td>
-              <td><input type="text" placeholder="ex: david_wayne" required  name="stripename">
-              <i>should unique, no special chars </i>
-            </td>
-              <td><textarea required name="description"></textarea></td>
-              <td ><input required type='number' name='price' /></td>
-              <td><input type="file" required name="child_photo"></td>
-              <td colspan='2'><button id="newsubmit" name="newsubmit" type="submit">Add</button></td>
-            </tr>
+
+       <form class='child-form' action="" method="post" enctype="multipart/form-data">
+              <div><input type="text" placeholder="Name" required id="newname" name="name"></div>
+              <div><input type="text" placeholder="SKU" required  name="stripename">
+              <br />
+              <i>Needed for stripe as a product key, should be unique, no special chars </i>
+            </div>
+            <div><input type="text" placeholder="Location" required id="" name="location"></div>
+
+              <div><textarea required  placeholder="description"  name="description"></textarea></div>
+              <div><input required type='number'  placeholder="price"  name='price' /></div>
+              <div><input type="file" required name="child_photo"></div>
+              <div><button class="btn"  id="newsubmit" name="newsubmit" type="submit">Add</button></div>
           </form>
+         
+          <table class='wp-list-table widefat striped'>
+            <thead>
+              <tr>
+                <th >Name</th>
+                <th >Stripename(SKU)</th>
+                <th >Amount</th>
+                <th >Photo</th>
+                <th >Actions</th>
+                <th >Donor</th>
+
+
+              </tr>
+            </thead>
+
+
           <?php
             $result = $wpdb->get_results("SELECT * FROM $table_name");
             foreach ($result as $print) {
@@ -152,7 +160,6 @@ function manage_child_sponsorship_callback(){
                 <tr>
                   <td >$print->name</td>
                   <td >$print->stripename</td>
-                  <td>$print->description</td>
                   <td> $print->price </td>
                   <td> <img src='$print->url' width='200'/></td>
                   <td ><a href='admin.php?page=manage-child-sponsorship&upt=$print->id'>Edit</a> <a href='admin.php?page=manage-child-sponsorship&del=$print->id'><button type='button'>DELETE</button></a></td>
@@ -161,9 +168,9 @@ function manage_child_sponsorship_callback(){
               ";
             }
           ?>
-        </tbody>  
-          <?php } ?>
+         
       </table>
+      <?php } ?>
       <br>
       <br>
      
@@ -200,59 +207,25 @@ function child_sponsorship_install () {
         
         $charset_collate = $wpdb->get_charset_collate();
     
-        $sql = "CREATE TABLE $table_name (
-            id mediumint(9) NOT NULL AUTO_INCREMENT,
-            time datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
-            name tinytext NOT NULL,
-            text text NOT NULL,
-            url varchar(55) DEFAULT '' NOT NULL,
-            PRIMARY KEY  (id)
-        ) $charset_collate;";
+        $sql = "CREATE TABLE `live_child_sponsorship` (
+          `id` mediumint(9) NOT NULL AUTO_INCREMENT,
+          `time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+          `name` tinytext  NOT NULL,
+          `stripename` varchar(255)  NOT NULL,
+          `description` text   NOT NULL,
+          `url` varchar(500)   NOT NULL DEFAULT '',
+          `price` int(4) NOT NULL,
+          `donor_user` varchar(255)   DEFAULT NULL,
+          `location` varchar(500)   DEFAULT NULL,
+          PRIMARY KEY  (id)
+        ) ;
+        
+        ";
     
         require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
         dbDelta( $sql );
     
  }
 
+ wp_enqueue_style( 'cs-admin-style', plugins_url('/css/settings.css', __FILE__), array(), time(), "all" );
 
-/*
-function video_popup_meta_row_style(){
-	wp_enqueue_style( 'video-popup-meta-row-style', plugins_url('/css/meta-row-style.css', __FILE__), array(), time(), "all" );
-
-	if( isset($_GET['page']) and ($_GET['page'] == 'video_popup_general_settings' or $_GET['page']== 'video_popup_shortcode' or $_GET['page']== 'video_popup_on_pageload') ){
-		wp_enqueue_style( 'video-popup-settings-style', plugins_url('/css/settings.css', __FILE__), array(), time(), "all" );
-	}
-
-    if( !get_option('vp_green_bg_menu') ) {
-        wp_enqueue_style( 'video-popup-green-menu', plugins_url('/css/green-menu.css', __FILE__), array(), time(), "all" );
-    }
-}
-add_action('admin_enqueue_scripts', 'video_popup_meta_row_style');
-
-
-
-
-
-
-
-
-function video_popup_extension_update_checker(){
-    if( get_option('vp_extension_update_checker_105') === false ){
-        if( get_option('vp_extension_update_checker_104') === true ){
-            delete_option('vp_extension_update_checker_104');
-        }
-        $cache_time = 3600 * 24 * 7;
-        delete_transient('vp-prm-alobaidi');
-        update_option('vp_extension_update_checker_105', '1');
-        update_option('vp_prm_alobaidi', 'has_up');
-        set_transient('vp-prm-alobaidi', 'has_up', $cache_time);
-    }
-}
-add_action('admin_init', 'video_popup_extension_update_checker');
-
-
-require_once dirname( __FILE__ ). '/settings.php';
-
-require_once dirname( __FILE__ ). '/on-pageload.php';
-
-require_once dirname( __FILE__ ). '/shortcode-usage.php';

@@ -6,11 +6,13 @@ defined( 'ABSPATH' ) or die(':)');
 function child_sponsorship_stripe() {
 	wp_enqueue_style( 'CS_stripe', plugins_url( '/../css/custom.css', __FILE__ ), array(), null, "all");
 	wp_enqueue_style( 'CS_tinyslider', "https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/tiny-slider.css");
+	wp_enqueue_style( 'CS_modal', "https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css");
 	//wp_enqueue_style( 'video_popup_close_icon', plugins_url( '/css/vp-close-icon/close-button-icon.css', __FILE__ ), array(), time(), "all");
 	//wp_enqueue_style( 'oba_youtubepopup_css', plugins_url( '/css/YouTubePopUp.css', __FILE__ ), array(), time(), "all");
 
 	wp_enqueue_script( 'CS_stripe', 'https://js.stripe.com/v3/');
 	wp_enqueue_script( 'CS_tinyslider', 'https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.1/min/tiny-slider.js');
+	wp_enqueue_script( 'CS_modal', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js');
 	
 	//wp_enqueue_script( 'CS_slick', plugins_url( '/../js/slick.min.js', __FILE__ ), array(), time(), true);
 
@@ -55,8 +57,7 @@ add_action( 'wp_ajax_nopriv_my_action', 'my_action_callback' );
 
 function child_sponsorship_html() {
 
-	global $wpdb;
-	$table_name = $wpdb->prefix . "child_sponsorship"; 
+	
 	
 	include_once( dirname( __FILE__ )."/display_records.php");
 
@@ -73,7 +74,7 @@ function child_sponsorship_cart_html() {
 
 function child_sponsorship_my_donations_html() {
 	
-	//include_once( dirname( __FILE__ )."/my_donations.php");
+	include_once( dirname( __FILE__ )."/my_donations.php");
 }
 function child_sponsorship_checkout_html() {
 	

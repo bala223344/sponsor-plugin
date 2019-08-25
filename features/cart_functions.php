@@ -1,5 +1,6 @@
 <?php
  	 
+     setlocale(LC_MONETARY, 'en_US');  
 
    function get_details($id) {
     global $wpdb;
